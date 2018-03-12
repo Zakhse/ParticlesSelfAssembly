@@ -63,6 +63,7 @@ module.exports = {
         'func-names': ['warn', 'as-needed'],
         'guard-for-in': 'off',
         'import/no-extraneous-dependencies': 'off',
+        'no-underscore-dangle': 'off',
         'vue/require-v-for-key': 'warn',
         'vue/html-indent': ['error', 4, {
             'attribute': 1,
