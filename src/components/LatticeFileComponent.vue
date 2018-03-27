@@ -8,28 +8,57 @@
                         width="128"
                         height="128"></canvas>
             </div>
-            <div class="info-fileinfo">
-                <div class="fileinfo-line">
-                    {{ file.name }}
+            <div class="right-part">
+                <div class="file-info-and-close">
+                    <div class="filename">
+                        {{ file.name }}
+                    </div>
+                    <div class="filesize">
+                        {{ fileSize }}
+                    </div>
+                    <el-button type="text"
+                               @click="$emit('remove')"
+                               class="close-button"
+                               icon="el-icon-close"/>
                 </div>
-                <div class="fileinfo-line">
-                    {{ fileSize }}
-                </div>
-            </div>
-            <div v-if="!parsingFile"
-                 class="check">
-                <el-button v-if="checkResult === null"
-                           :loading="checking"
-                           @click.stop="checkClick">
-                    Проверить
-                </el-button>
-                <div v-if="checkResult === 'yes'"
-                     class="result success">
-                    Есть самоорганизация
-                </div>
-                <div v-if="checkResult === 'no'"
-                     class="result failed">
-                    Нет самоорганизации
+                <div class="check-row"
+                     v-if="!parsingFile">
+                    <div class="check-by-clasters-block">
+                        <div class="method-label">
+                            Метод кластеров
+                        </div>
+                        <el-button v-if="checkByClastersResult === null"
+                                   :loading="checkingByClasters"
+                                   @click.stop="checkByClasters">
+                            Проверить
+                        </el-button>
+                        <div v-if="checkByClastersResult === 'yes'"
+                             class="result success">
+                            <i class="el-icon-check"/>
+                        </div>
+                        <div v-if="checkByClastersResult === 'no'"
+                             class="result failed">
+                            <i class="el-icon-close"/>
+                        </div>
+                    </div>
+                    <div class="check-by-neighbours-block">
+                        <div class="method-label">
+                            Метод соседей
+                        </div>
+                        <el-button v-if="checkByNeighboursResult === null"
+                                   :loading="checkingByNeighbours"
+                                   @click.stop="checkByNeighbours">
+                            Проверить
+                        </el-button>
+                        <div v-if="checkByNeighboursResult === 'yes'"
+                             class="result success">
+                            <i class="el-icon-check"/>
+                        </div>
+                        <div v-if="checkByNeighboursResult === 'no'"
+                             class="result failed">
+                            <i class="el-icon-close"/>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -49,7 +78,9 @@
 <script>
 import { LatticeValuesEnum, parseFile } from '@/self_assembly_library/utils';
 import { catchError } from '@/assets/js/ErrorHandle/ErrorHandle';
-import checkAssembly from '@/assets/js/CheckAssembly';
+// import checkAssembly from '@/assets/js/CheckAssembly';
+import checkByClasters from '@/assets/js/CheckAssembly';
+import checkByNeighbours from '@/assets/js/CheckAssemblyByNeignbours';
 import filesize from 'filesize';
 
 export default {
@@ -63,10 +94,12 @@ export default {
             canvasContext: null,
             bigCanvasDialogVisible: false,
             bigCanvasWasDrawn: false,
-            checking: false,
-            checkResult: null, // true or false
             parsedData: [],
             parsingFile: false,
+            checkingByClasters: false,
+            checkingByNeighbours: false,
+            checkByClastersResult: null, // true or false
+            checkByNeighboursResult: null, // true or false
         };
     },
     computed: {
@@ -77,7 +110,7 @@ export default {
             return this.parsedData.length;
         },
         canvasNonScaled() {
-            console.log('canvas non scaled');
+            // console.log('canvas non scaled');
             const scale = 1;
             const sz = this.size;
             const newCanvas = document.createElement('canvas');
@@ -103,32 +136,42 @@ export default {
                     canvCtx.fillRect(x * scale, y * scale, scale, scale);
                 }
             }
-            console.log('canvas non scaled end');
+            // console.log('canvas non scaled end');
             return newCanvas;
         },
     },
     methods: {
-        checkClick() {
-            this.checking = true;
-            checkAssembly(this.parsedData)
+        checkByClasters() {
+            this.checkingByClasters = true;
+            checkByClasters(this.parsedData)
                 .then(() => {
-                    this.checking = false;
-                    this.checkResult = 'yes';
+                    this.checkByClastersResult = 'yes';
+                    this.checkingByClasters = false;
                 })
                 .catch(() => {
-                    this.checking = false;
-                    this.checkResult = 'no';
+                    this.checkByClastersResult = 'no';
+                    this.checkingByClasters = false;
+                });
+        },
+        checkByNeighbours() {
+            this.checkingByNeighbours = true;
+            checkByNeighbours(this.parsedData)
+                .then(() => {
+                    this.checkByNeighboursResult = 'yes';
+                    this.checkingByNeighbours = false;
+                })
+                .catch(() => {
+                    this.checkByNeighboursResult = 'no';
+                    this.checkingByNeighbours = false;
                 });
         },
         fillCanvas() {
-            console.log('fill canvas');
             if (!this.canvasContext) {
                 return;
             }
             this.canvasContext.drawImage(this.canvasNonScaled, 0, 0, this.canvas.width, this.canvas.height);
         },
         fillBigCanvas() {
-            console.log('fill big canvas');
             if (this.bigCanvasWasDrawn) {
                 return;
             }
@@ -173,7 +216,6 @@ export default {
     watch: {
         canvasNonScaled: {
             handler() {
-                console.log('canvas handler');
                 this.fillCanvas();
                 this.bigCanvasWasDrawn = false;
                 this.fillBigCanvas();
@@ -182,7 +224,6 @@ export default {
         },
         file: {
             handler() {
-                console.log('file handler');
                 this.parseFile();
             },
             immediate: true,
@@ -214,13 +255,45 @@ export default {
     .lattice-file-info-container {
         display: flex;
         justify-content: flex-start;
-        .info-fileinfo {
-            margin-left: 5px;
+
+        .right-part {
             display: flex;
             flex-direction: column;
-            .fileinfo-line {
-                &:not(:last-child) {
-                    margin-bottom: 5px;
+            flex-grow: 1;
+            justify-content: space-between;
+            margin-left: 1.5ch;
+            .file-info-and-close {
+                display: flex;
+                .filename, .filesize {
+                    margin-right: 1ch;
+                }
+                .close-button {
+                    margin-left: auto;
+                    font-size: 1.6em;
+                    padding: 0;
+                }
+            }
+            .check-row {
+                display: flex;
+                margin-bottom: 0.7em;
+                .check-by-clasters-block, .check-by-neighbours-block {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    flex-basis: 50%;
+                    .method-label {
+                        margin-bottom: 0.8em;
+                    }
+
+                    .result {
+                        font-size: 2em;
+                        &.success {
+                            color: limegreen;
+                        }
+                        &.failed {
+                            color: red;
+                        }
+                    }
                 }
             }
         }

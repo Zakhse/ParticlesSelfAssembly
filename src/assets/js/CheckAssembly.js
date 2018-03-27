@@ -1,6 +1,6 @@
 import { LatticeValuesEnum } from '@/self_assembly_library/utils';
 
-const mainCoef = 0.7;
+const mainCoef = 0.9;
 
 /* function _clasterLatticeToString(clasterLattice) {
     const height = clasterLattice.length;
@@ -18,22 +18,11 @@ const mainCoef = 0.7;
     }
     return str;
 } */
-let counter = 0;
 
 function _getRightIndexForClaster(clastersArray, clasterIndex) {
-    counter++;
-    if (counter > 300) {
-        console.log(clasterIndex, clastersArray);
-        throw new Error('hmm... counter is > 300');
-    }
     const currentIndexPointTo = clastersArray[clasterIndex];
-    if (currentIndexPointTo === undefined) {
-        console.log('hmm, current index point to is undefined...');
-        // console.log(clasterIndex, Array.from(clastersArray));
-    }
 
     if (clasterIndex === currentIndexPointTo) {
-        counter = 0;
         return clasterIndex;
     }
 
@@ -215,9 +204,6 @@ function checkSelfAssembly(parsedSquareData) {
             maxHorizontal = size;
         }
     });
-    console.log('sizes:', sizes);
-    console.log('Max horizontal:', maxHorizontal, 'Sum horizontal:', sumHorizontal);
-    console.log('Max vertical:', maxVertical, 'Sum vertical:', sumVertical);
 
     return maxHorizontal / sumHorizontal >= mainCoef && maxVertical / sumVertical >= mainCoef;
 }

@@ -81,8 +81,11 @@ export default {
     $bp-min-desktop: $bp-max-tablet + 1px;
 
     .lattice-files-list {
-        padding: 5px;
-        background-color: whitesmoke;
+        /*padding: 5px;*/
+        .lattice-file {
+            background-color: whitesmoke;
+            padding: 5px;
+        }
         .lattice-file:not(:last-child) {
             margin-bottom: 5px;
         }
