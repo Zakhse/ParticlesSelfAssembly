@@ -1,4 +1,4 @@
-import { LatticeValuesEnum } from '@/self_assembly_library/utils';
+import { LatticeValuesEnum } from '@/assets/js/utils';
 
 const mainCoef = 0.9;
 

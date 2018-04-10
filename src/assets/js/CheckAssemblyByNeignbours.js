@@ -1,4 +1,4 @@
-import { LatticeValuesEnum } from '@/self_assembly_library/utils';
+import { LatticeValuesEnum } from '@/assets/js/utils';
 
 const coef = 0.1;
 
@@ -44,12 +44,7 @@ function checkSelfAssemblyByNeighbours(parsedSquareData, particleLength) {
     }
     processCell(maxX, maxY, 0, maxY, maxX, 0);
 
-    // console.log(`horizontal particles: ${horizontalCells / particleLength}`);
-    // console.log(`vertical particles: ${verticalCells / particleLength}`);
-    // console.log(`max contacts: ${maxContacts}`);
-    // console.log(`intercontacts: ${interracialContacts}`);
     const countedCoef = interracialContacts / ((horizontalCells + verticalCells) / particleLength);
-    // console.log(`coef: ${countedCoef}`);
     return countedCoef < coef;
 }
 

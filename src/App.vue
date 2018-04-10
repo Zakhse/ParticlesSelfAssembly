@@ -1,6 +1,5 @@
 <template>
     <div id="app">
-        <!--<router-view/>-->
         <el-upload
             class="files-upload"
             multiple
@@ -29,9 +28,9 @@
 </template>
 
 <script>
-import { validateFileType } from '@/self_assembly_library/utils';
+import { validateFileType } from '@/assets/js/utils';
 import { catchError } from '@/assets/js/ErrorHandle/ErrorHandle';
-import Lattice from '@/components/LatticeFileComponent';
+import Lattice from '@/components/LatticeFile';
 
 export default {
     name: 'App',

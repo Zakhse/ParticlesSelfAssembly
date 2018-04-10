@@ -76,10 +76,10 @@
 </template>
 
 <script>
-import { LatticeValuesEnum, parseFile } from '@/self_assembly_library/utils';
+import { LatticeValuesEnum, parseFile } from '@/assets/js/utils';
 import { catchError } from '@/assets/js/ErrorHandle/ErrorHandle';
 // import checkAssembly from '@/assets/js/CheckAssembly';
-import checkByClasters from '@/assets/js/CheckAssembly';
+import checkByClasters from '@/assets/js/CheckAssemblyByClasters';
 import checkByNeighbours from '@/assets/js/CheckAssemblyByNeignbours';
 import filesize from 'filesize';
 
